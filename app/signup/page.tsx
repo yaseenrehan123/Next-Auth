@@ -1,6 +1,8 @@
+import Button from '@/components/ui/button'
 import FormContainer from '@/components/ui/formContainer'
 import FormField from '@/components/ui/formField'
 import Heading from '@/components/ui/heading'
+import { registerUser } from '@/lib/actions'
 
 import React from 'react'
 
@@ -11,7 +13,7 @@ const page = () => {
                 <Heading className='font-anton text-black'>
                     Signup
                 </Heading>
-                <form action=""
+                <form action={registerUser}
                     className='flex items-center flex-col gap-3'>
                     <FormField
                         type='text'
@@ -30,9 +32,13 @@ const page = () => {
                         variant='large' bg='dark' />
                     <FormField
                         type='text'
-                        name='confirm-password'
+                        name='confirmPassword'
                         placeholder='confirm password'
                         variant='large' bg='dark' />
+                    <Button type='submit' variant='default'
+                        className='border-2 border-black'>
+                        Submit
+                    </Button>
                 </form>
             </FormContainer>
         </div>
