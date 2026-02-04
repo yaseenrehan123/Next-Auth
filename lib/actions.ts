@@ -26,6 +26,9 @@ export async function registerUser(formData: FormData) {
     });
 
     if (user) {
+        if (user.verified) {
+            throw new Error("ACCOUNT ALREADY EXISTS");
+        }
         if (hashedPassword !== user.hashedPassword) {
             /*USER POTENTIALLY TRIED TO SIGNUP AGAIN AND WITH DIFFERENT PASSWORD
             ACCOUNT NOT VERIFIED YET*/
