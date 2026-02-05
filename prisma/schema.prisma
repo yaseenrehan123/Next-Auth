@@ -14,11 +14,20 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid())
-  username       String
-  email          String   @unique
-  hashedPassword String
-  verified       Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  updateAt       DateTime @updatedAt
+  id                String             @id @default(uuid())
+  username          String
+  email             String             @unique
+  hashedPassword    String
+  verified          Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updateAt          DateTime           @updatedAt
+  verificationToken VerificationToken?
+}
+
+model VerificationToken {
+  id               String   @id @default(uuid())
+  token            String
+  createdAt        DateTime @default(now())
+  unverifiedUser   User     @relation(fields: [unverifiedUserId], references: [id])
+  unverifiedUserId String   @unique
 }

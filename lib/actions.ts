@@ -1,4 +1,5 @@
 "use server";
+import generateVerificationToken from "@/tokens/generateVerificationToken";
 import prisma from "./prisma";
 import { hash, genSalt } from "bcrypt";
 export async function registerUser(formData: FormData) {
@@ -29,32 +30,32 @@ export async function registerUser(formData: FormData) {
         if (user.verified) {
             throw new Error("ACCOUNT ALREADY EXISTS");
         }
-        if (hashedPassword !== user.hashedPassword) {
-            /*USER POTENTIALLY TRIED TO SIGNUP AGAIN AND WITH DIFFERENT PASSWORD
-            ACCOUNT NOT VERIFIED YET*/
-            await prisma.user.update({
-                where: { email: email },
-                data: {
-                    hashedPassword: hashedPassword
-                }
-            });
-            console.log(user);
-            return;
-        }
-        console.log("USER ALREADY EXISTS!");
-        return
+        await prisma.user.update({
+            where: { email: email },
+            data: {
+                hashedPassword: hashedPassword
+            }
+        });
+        console.log(user);
     }
+    else {
+        const newUser = await prisma.user.create({
+            data: {
+                username,
+                email,
+                hashedPassword
 
-    const newUser = await prisma.user.create({
-        data: {
-            username,
-            email,
-            hashedPassword
+            }
+        });
+        console.log(newUser);
 
-        }
-    });
+    }
+    const token: string = await generateVerificationToken(email);
 
-    console.log(newUser);
+    console.log("VERIFICATION TOKEN: ", token);
 
     console.log("FORM DATA:", data);
 }
+
+
+
