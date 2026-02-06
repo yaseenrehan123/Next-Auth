@@ -2,7 +2,7 @@
 import generateVerificationToken from "@/tokens/generateVerificationToken";
 import prisma from "./prisma";
 import { hash, genSalt } from "bcrypt";
-import { Resend } from "resend";
+import { sendMail } from "./resend";
 export async function registerUser(formData: FormData) {
     const signupSchema = (await import("@/schemas/signupSchema")).default;
     if (!signupSchema) {
@@ -53,20 +53,11 @@ export async function registerUser(formData: FormData) {
     }
     const token: string = await generateVerificationToken(email);
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
-
-    const { error } = await resend.emails.send({
-        from: "onboarding@resend.dev",
-        to: [email],
-        subject: "Signup Verification",
-        html: `
-        Click the link to verify: ${process.env.CLIENT_URL}/verify?token=${token}
-`
-    });
-
-    if (error) {
-        throw new Error(error.message);
-    }
+    await sendMail({
+        subject: "ACCOUNT VERIFICATION",
+        address: email,
+        message: `VERIFY YOUR ACCOUNT: ${process.env.CLIENT_URL}/verify?token=${token}`
+    })
 
     console.log("VERIFICATION TOKEN: ", token);
 
