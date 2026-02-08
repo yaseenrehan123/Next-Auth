@@ -17,10 +17,11 @@ async function generateVerificationToken(email: string) {
             verificationToken: {
                 upsert: {
                     create: {
-                        token: hashedToken
+                        hashedToken,
+                        expiresAt: new Date(Date.now() + 30 * 60 * 1000)
                     },
                     update: {
-                        token: hashedToken
+                        hashedToken
                     }
                 }
             }

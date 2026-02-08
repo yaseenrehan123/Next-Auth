@@ -26,8 +26,9 @@ model User {
 
 model VerificationToken {
   id               String   @id @default(uuid())
-  token            String
+  hashedToken      String
   createdAt        DateTime @default(now())
+  expiresAt        DateTime
   unverifiedUser   User     @relation(fields: [unverifiedUserId], references: [id])
   unverifiedUserId String   @unique
 }

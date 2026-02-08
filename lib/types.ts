@@ -18,3 +18,8 @@ export type SendMailProps = {
     address: string,
     message: string
 }
+//ACTION PROPS
+export type VerifyUserProps = {
+    token: string,
+    email: string
+}

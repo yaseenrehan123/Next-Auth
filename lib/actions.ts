@@ -3,6 +3,9 @@ import generateVerificationToken from "@/tokens/generateVerificationToken";
 import prisma from "./prisma";
 import { hash, genSalt } from "bcrypt";
 import { sendMail } from "./resend";
+import { VerifyUserProps } from "./types";
+import crypto from "crypto";
+
 export async function registerUser(formData: FormData) {
     const signupSchema = (await import("@/schemas/signupSchema")).default;
     if (!signupSchema) {
@@ -64,5 +67,46 @@ export async function registerUser(formData: FormData) {
     console.log("FORM DATA:", data);
 }
 
+export async function verifyUser({ token, email }: VerifyUserProps) {
+    if (!token) {
+        throw new Error("TOKEN DOES NOT EXIST!");
+    };
 
+    const user = await prisma.user.findUnique({
+        where: { email: email },
+        include: { verificationToken: true }
+    });
+
+    if (!user) {
+        throw new Error("USER DOES NOT EXIST!")
+    };
+    if (user.verified) {
+        throw new Error("USER ALREADY VERIFIED!");
+    }
+    if (!user.verificationToken) {
+        throw new Error("NO TOKEN CAN BE FOUND FOR THIS ACCOUNT");
+    };
+    if (new Date() > user.verificationToken.expiresAt) {
+        throw new Error("THE TOKEN HAS EXPIRED!");
+    }
+    const hashedToken: string = await crypto.createHash("sha256").update(token).digest("hex");
+
+    if (user.verificationToken.hashedToken !== hashedToken) {
+        throw new Error("INVALID TOKEN!");
+    };
+
+    const verifiedUser = await prisma.user.update({
+        where: { email: email },
+        data: {
+            verified: true
+        }
+    });
+
+    await prisma.verificationToken.delete({
+        where: { id: user.verificationToken.id }
+    });
+
+    console.log("USER VERIFIED!");
+    console.log(verifiedUser);
+}
 
