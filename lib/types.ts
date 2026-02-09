@@ -12,6 +12,11 @@ export type FormContainerProps = React.HTMLAttributes<HTMLDivElement> & {
 export type HeadingProps = React.HTMLAttributes<HTMLDivElement> & {
     variant?: 'sm' | 'md' | 'lg' | 'xl'
 }
+export type MessageProps = React.HTMLAttributes<HTMLDivElement> & {
+    variant?: 'default' | 'success' | 'loading' | 'error',
+    disableOnContent?: 'never' | 'sm' | 'md' | 'lg',
+    content?: String
+}
 //FUNC PROPS
 export type SendMailProps = {
     subject: string,

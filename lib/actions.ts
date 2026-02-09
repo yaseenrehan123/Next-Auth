@@ -108,5 +108,7 @@ export async function verifyUser({ token, email }: VerifyUserProps) {
 
     console.log("USER VERIFIED!");
     console.log(verifiedUser);
+
+    return { success: true }
 }
 

@@ -21,7 +21,8 @@ async function generateVerificationToken(email: string) {
                         expiresAt: new Date(Date.now() + 30 * 60 * 1000)
                     },
                     update: {
-                        hashedToken
+                        hashedToken,
+                        expiresAt: new Date(Date.now() + 30 * 60 * 1000)
                     }
                 }
             }
