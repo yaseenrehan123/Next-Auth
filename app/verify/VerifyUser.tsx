@@ -6,11 +6,13 @@ import React, { useEffect, useState } from 'react'
 import { verifyUser } from '@/lib/actions';
 import { VerifyUserProps } from '@/lib/types';
 import Message from '@/components/ui/message';
+import { useRouter } from 'next/navigation';
 
 const VerifyUser = () => {
     const searchParams = useSearchParams();
     const token: string = searchParams.get("token") || "";
     const [email, setEmail] = useState<string>("");
+    const router = useRouter();
 
     const { isError, isPending, isSuccess, error, mutateAsync } = useMutation({
         mutationKey: ["verifyUser"],
@@ -18,14 +20,15 @@ const VerifyUser = () => {
             return await verifyUser(data);
         },
         onSuccess: () => {
-            localStorage.removeItem("verificationEmail")
+            localStorage.removeItem("verificationEmail");
+            router.push('/')
         }
     });
 
     useEffect(() => {
         const email: string = localStorage.getItem("verificationEmail") || "";
         setEmail(email);
-    }, [])
+    }, []);
 
     useEffect(() => {
         console.log("TOKEN:", token);
