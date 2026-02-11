@@ -5,6 +5,7 @@ import { hash, genSalt } from "bcrypt";
 import { sendMail } from "./resend";
 import { VerifyUserProps } from "./types";
 import crypto from "crypto";
+import { signIn } from "@/auth";
 
 export async function registerUser(formData: FormData) {
     const signupSchema = (await import("@/schemas/signupSchema")).default;
@@ -112,3 +113,16 @@ export async function verifyUser({ token, email }: VerifyUserProps) {
     return { success: true }
 }
 
+export async function loginUser(formData: FormData) {
+    try {
+        await signIn("credentials", {
+            email: formData.get("email"),
+            password: formData.get("password"),
+            redirectTo: '/'
+        });
+        console.log("USER SUCCESSFULY LOGGED IN!");
+    }
+    catch (err) {
+        throw err
+    }
+}
