@@ -4,7 +4,7 @@ import prisma from "./prisma";
 import { hash, genSalt } from "bcrypt";
 import { sendMail } from "./resend";
 import { VerifyUserProps } from "./types";
-import crypto from "crypto";
+import crypto, { sign } from "crypto";
 import { signIn } from "@/auth";
 
 export async function registerUser(formData: FormData) {
@@ -121,6 +121,16 @@ export async function loginUser(formData: FormData) {
             redirectTo: '/'
         });
         console.log("USER SUCCESSFULY LOGGED IN!");
+    }
+    catch (err) {
+        throw err
+    }
+}
+
+export async function loginOAuth(provider: string) {
+    try {
+        await signIn(provider);
+        console.log("USER SUCCESSFULLY LOGGED IN WITH PROVIDER: ", provider);
     }
     catch (err) {
         throw err
