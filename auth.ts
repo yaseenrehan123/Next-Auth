@@ -2,8 +2,10 @@ import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import prisma from "./lib/prisma";
+import { PrismaAdapter } from "@auth/prisma-adapter"
 import { compare } from "bcrypt";
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    adapter: PrismaAdapter(prisma),
     providers: [
         Google,
         Credentials({
@@ -65,5 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     pages: {
         signIn: "/login"
-    }
+    },
+    secret: process.env.AUTH_SECRET,
+    debug: true
 })

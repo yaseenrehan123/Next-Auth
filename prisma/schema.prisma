@@ -14,14 +14,20 @@ datasource db {
 }
 
 model User {
-  id                String             @id @default(uuid())
-  username          String
-  email             String             @unique
-  hashedPassword    String
-  verified          Boolean            @default(false)
-  createdAt         DateTime           @default(now())
-  updateAt          DateTime           @updatedAt
+  id             String   @id @default(uuid())
+  username       String?
+  email          String   @unique
+  hashedPassword String?
+  verified       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updateAt       DateTime @updatedAt
+
+  name          String?
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+
   verificationToken VerificationToken?
+  accounts          Account[]
 }
 
 model VerificationToken {
@@ -31,4 +37,23 @@ model VerificationToken {
   expiresAt        DateTime
   unverifiedUser   User     @relation(fields: [unverifiedUserId], references: [id])
   unverifiedUserId String   @unique
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
