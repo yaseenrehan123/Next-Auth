@@ -8,5 +8,7 @@ main()
 
 async function main() {
     await prisma.verificationToken.deleteMany();
+    await prisma.session.deleteMany();
+    await prisma.account.deleteMany();
     await prisma.user.deleteMany();
 };

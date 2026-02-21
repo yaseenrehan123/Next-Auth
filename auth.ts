@@ -4,6 +4,11 @@ import Google from "next-auth/providers/google";
 import prisma from "./lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { compare } from "bcrypt";
+
+console.log("DEBUG: Is prisma.user defined?", !!prisma.user);
+console.log("DEBUG: Is prisma.account defined?", !!prisma.account);
+const accounts = await prisma.account.findMany();
+console.log("DEBUG: Accounts? ", accounts);
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
     providers: [
@@ -23,7 +28,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     //throw new Error(`NO USER FOUND! ${email}`);
                 };
 
-                const isCorrectPassword: boolean = await compare(password, user.hashedPassword);
+                const isCorrectPassword: boolean = await compare(password, user.hashedPassword ?? "");
 
                 if (!isCorrectPassword) {
                     return null
