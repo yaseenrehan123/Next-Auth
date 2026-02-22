@@ -8,7 +8,9 @@ import { compare } from "bcrypt";
 console.log("DEBUG: Is prisma.user defined?", !!prisma.user);
 console.log("DEBUG: Is prisma.account defined?", !!prisma.account);
 const accounts = await prisma.account.findMany();
+const users = await prisma.user.findMany();
 console.log("DEBUG: Accounts? ", accounts);
+console.log("DEBUG: Users?", users)
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
     providers: [
