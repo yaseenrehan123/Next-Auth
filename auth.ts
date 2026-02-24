@@ -14,7 +14,9 @@ console.log("DEBUG: Users?", users)
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
     providers: [
-        Google,
+        Google({
+            allowDangerousEmailAccountLinking: true
+        }),
         Credentials({
 
             authorize: async (credentials) => {
@@ -52,10 +54,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             const dbUser = await prisma.user.findUnique({
                 where: { id: token.id as string },
-                select: { id: true, verified: true }
+                select: { id: true, emailVerified: true }
             });
 
-            if (!dbUser || !dbUser.verified) {
+            if (!dbUser || !dbUser.emailVerified) {
                 return null
             };
 

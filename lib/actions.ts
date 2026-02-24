@@ -46,7 +46,7 @@ export async function registerUser(formData: FormData) {
     else {
         const newUser = await prisma.user.create({
             data: {
-                username,
+                name: username,
                 email,
                 hashedPassword
 
@@ -81,7 +81,7 @@ export async function verifyUser({ token, email }: VerifyUserProps) {
     if (!user) {
         throw new Error("USER DOES NOT EXIST!")
     };
-    if (user.verified) {
+    if (user.emailVerified) {
         throw new Error("USER ALREADY VERIFIED!");
     }
     if (!user.verificationToken) {
@@ -99,7 +99,8 @@ export async function verifyUser({ token, email }: VerifyUserProps) {
     const verifiedUser = await prisma.user.update({
         where: { email: email },
         data: {
-            verified: true
+            //verified: true
+            emailVerified: new Date()
         }
     });
 
