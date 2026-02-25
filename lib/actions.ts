@@ -32,7 +32,7 @@ export async function registerUser(formData: FormData) {
     });
 
     if (user) {
-        if (user.verified) {
+        if (user.emailVerified) {
             throw new Error("ACCOUNT ALREADY EXISTS");
         }
         await prisma.user.update({
