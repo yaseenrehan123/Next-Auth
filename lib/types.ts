@@ -1,3 +1,5 @@
+import signupSchema from "@/schemas/signupSchema"
+import { z } from "zod";
 //SHADCN PROPS
 export type FormFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
     variant?: 'default' | 'small' | 'large',
@@ -28,3 +30,5 @@ export type VerifyUserProps = {
     token: string,
     email: string
 }
+//INFERS
+export type SignUpFormFields = z.infer<typeof signupSchema>

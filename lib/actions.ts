@@ -3,17 +3,17 @@ import generateVerificationToken from "@/tokens/generateVerificationToken";
 import prisma from "./prisma";
 import { hash, genSalt } from "bcrypt";
 import { sendMail } from "./resend";
-import { VerifyUserProps } from "./types";
+import { SignUpFormFields, VerifyUserProps } from "./types";
 import crypto, { sign } from "crypto";
 import { signIn } from "@/auth";
 
-export async function registerUser(formData: FormData) {
+export async function registerUser(formData: SignUpFormFields) {
     const signupSchema = (await import("@/schemas/signupSchema")).default;
     if (!signupSchema) {
         throw new Error("FAILED TO IMPORT SIGNUP SCHEMA!");
     }
-    const rawData = Object.fromEntries(formData.entries());
-    const result = signupSchema.safeParse(rawData);
+    //const rawData = Object.fromEntries(formData.entries());
+    const result = signupSchema.safeParse(formData);
     if (!result.success) {
         throw new Error(result.error.message);
     };
@@ -32,7 +32,7 @@ export async function registerUser(formData: FormData) {
     });
 
     if (user) {
-        if (user.verified) {
+        if (user.emailVerified) {
             throw new Error("ACCOUNT ALREADY EXISTS");
         }
         await prisma.user.update({
@@ -46,7 +46,7 @@ export async function registerUser(formData: FormData) {
     else {
         const newUser = await prisma.user.create({
             data: {
-                username,
+                name: username,
                 email,
                 hashedPassword
 
@@ -81,7 +81,7 @@ export async function verifyUser({ token, email }: VerifyUserProps) {
     if (!user) {
         throw new Error("USER DOES NOT EXIST!")
     };
-    if (user.verified) {
+    if (user.emailVerified) {
         throw new Error("USER ALREADY VERIFIED!");
     }
     if (!user.verificationToken) {
@@ -99,7 +99,8 @@ export async function verifyUser({ token, email }: VerifyUserProps) {
     const verifiedUser = await prisma.user.update({
         where: { email: email },
         data: {
-            verified: true
+            //verified: true
+            emailVerified: new Date()
         }
     });
 
