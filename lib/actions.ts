@@ -3,17 +3,17 @@ import generateVerificationToken from "@/tokens/generateVerificationToken";
 import prisma from "./prisma";
 import { hash, genSalt } from "bcrypt";
 import { sendMail } from "./resend";
-import { VerifyUserProps } from "./types";
+import { SignUpFormFields, VerifyUserProps } from "./types";
 import crypto, { sign } from "crypto";
 import { signIn } from "@/auth";
 
-export async function registerUser(formData: FormData) {
+export async function registerUser(formData: SignUpFormFields) {
     const signupSchema = (await import("@/schemas/signupSchema")).default;
     if (!signupSchema) {
         throw new Error("FAILED TO IMPORT SIGNUP SCHEMA!");
     }
-    const rawData = Object.fromEntries(formData.entries());
-    const result = signupSchema.safeParse(rawData);
+    //const rawData = Object.fromEntries(formData.entries());
+    const result = signupSchema.safeParse(formData);
     if (!result.success) {
         throw new Error(result.error.message);
     };
