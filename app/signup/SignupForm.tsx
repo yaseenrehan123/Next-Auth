@@ -10,16 +10,28 @@ import { SignUpFormFields } from '@/lib/types';
 import { zodResolver } from "@hookform/resolvers/zod";
 import signupSchema from '@/schemas/signupSchema';
 import Message from '@/components/ui/message';
+import { useMutation } from "@tanstack/react-query";
 
 const SignupForm = () => {
     const [message, setMessage] = useState<string>("");
-    const { register, handleSubmit, formState: { errors, isSubmitting, isSubmitted, } } = useForm<SignUpFormFields>({
+    const { register, handleSubmit, reset, formState: { errors, } } = useForm<SignUpFormFields>({
         resolver: zodResolver(signupSchema)
+    });
+
+    const { mutateAsync, isPending, isSuccess, } = useMutation({
+        mutationKey: ["signup"],
+        mutationFn: registerUser,
+        onSuccess: () => {
+            reset();
+            setMessage("Success")
+        },
+        onError: (e) => setMessage(e.message)
     });
 
     const onSubmit = async (formData: SignUpFormFields) => {
         localStorage.setItem("verificationEmail", formData.email)
-        await registerUser(formData)
+        console.log("SUBMIT CALLED!");
+        await mutateAsync(formData)
     }
     return (
         <FormContainer variant='light'>
@@ -65,11 +77,14 @@ const SignupForm = () => {
                     <Message variant='error' content={errors.confirmPassword?.message} />
                 </div>
                 <Button type='submit' variant='default'
-                    className={`border-2 border-black ${isSubmitting ? "opacity-90" : "opacity-100"}`}
-                    disabled={isSubmitting}>
-                    {isSubmitting ? "Loading" : "Submit"}
+                    className={`border-2 border-black ${isPending ? "opacity-90" : "opacity-100"}`}
+                    disabled={isPending}>
+                    {isPending ? "Loading" : "Submit"}
                 </Button>
             </form>
+            <Message variant={isSuccess ? 'success' : "error"}
+                disableOnContent='md'
+                content={message} />
         </FormContainer>
     )
 }

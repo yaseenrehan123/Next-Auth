@@ -4,7 +4,7 @@ import prisma from "./prisma";
 import { hash, genSalt } from "bcrypt";
 import { sendMail } from "./resend";
 import { SignUpFormFields, VerifyUserProps } from "./types";
-import crypto, { sign } from "crypto";
+import crypto from "crypto";
 import { signIn } from "@/auth";
 
 export async function registerUser(formData: SignUpFormFields) {
