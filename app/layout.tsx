@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import TanstackProvider from "@/providers/TanstackProvider";
 import DebugLoggedInState from "@/DebugLoggedInState";
+import Navbar from "./navbar/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
       >
         <TanstackProvider>
           <DebugLoggedInState />
+          <Navbar />
           {children}
         </TanstackProvider>
       </body>
