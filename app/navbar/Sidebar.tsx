@@ -24,7 +24,9 @@ const Sidebar = () => {
     //const { mutateAsync } = useLogout();
     const router = useRouter();
 
-    const onSignButton = async () => {
+    const onSignButton = async (e: React.MouseEvent) => {
+        e.preventDefault();
+
         console.log("LOGGED:", loggedIn);
         if (!loggedIn) {
             console.log("NAVIGATION CODE RAN!");
@@ -54,7 +56,7 @@ const Sidebar = () => {
                         >
                             <ProfileIcon variant='sidebar' username='Magstar' />
                             <ColumnDivider variant='thin' />
-                            <Navlink variant='sidebar' onClick={() => onSignButton()} navigateRoute={false}>
+                            <Navlink variant='sidebar' onClick={(e) => onSignButton(e)} navigateRoute={false}>
                                 <FaSignInAlt /> {!loggedIn ? 'Sign In' : 'Sign Out'}
                             </Navlink>
                             <Navlink variant='sidebar' href={'/profile'}>

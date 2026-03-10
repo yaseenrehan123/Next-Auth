@@ -1,7 +1,7 @@
 "use client";
 import type { AuthStore } from "@/lib/types";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 export const useAuthStore = create<AuthStore>()(
     persist(
@@ -10,7 +10,7 @@ export const useAuthStore = create<AuthStore>()(
             setAccessToken: (newVal: string) => set({ accessToken: newVal }),
             loggedIn: false,
             setLoggedIn: (val: boolean) => set({ loggedIn: val }),
-            refreshToken: localStorage.getItem('refreshToken') || "",
+            refreshToken: "",
             setRefreshToken: (newVal: string) => {
                 set({ refreshToken: newVal })
                 localStorage.setItem("refreshToken", newVal)
@@ -18,7 +18,11 @@ export const useAuthStore = create<AuthStore>()(
         }),
         {
             name: "auth-storage",
-            partialize: (state) => ({ accessToken: state.accessToken }),
+            storage: createJSONStorage(() => localStorage),
+            partialize: (state) => ({
+                accessToken: state.accessToken,
+                refreshToken: state.refreshToken
+            }),
         }
     )
 );
