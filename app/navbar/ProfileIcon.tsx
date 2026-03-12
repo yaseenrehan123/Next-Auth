@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react'
 import { CgProfile } from "react-icons/cg";
 import ProfileAvatar from '../../components/ui/profileAvatar';
 import type { ProfileAvatarProps, ProfileIconProps } from '@/lib/types';
-import { useAuthStore } from '@/stores/useAuthStore';
+//import { useAuthStore } from '@/stores/useAuthStore';
+import { useSession } from "next-auth/react";
 
 const ProfileIcon = ({ username, avatarUrl, ...avatarProps }: ProfileAvatarProps) => {
-    const loggedIn = useAuthStore((state) => state.loggedIn);
+    const { data: session, status } = useSession();
+    const loggedIn = status === "authenticated";
     const [logoError, setLogoError] = useState<boolean>(false);
     const setEnabled = useSidebarStore((state) => state.setEnabled);
     useEffect(() => {

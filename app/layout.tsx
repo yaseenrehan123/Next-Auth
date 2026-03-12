@@ -4,6 +4,7 @@ import "./globals.css";
 import TanstackProvider from "@/providers/TanstackProvider";
 import DebugLoggedInState from "@/DebugLoggedInState";
 import Navbar from "./navbar/Navbar";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,9 +32,11 @@ export default function RootLayout({
         className={"bg-neutral-950 w-screen h-screen m-0 p-0 box-border text-white text-center"}
       >
         <TanstackProvider>
-          <DebugLoggedInState />
-          <Navbar />
-          {children}
+          <SessionProvider>
+            <DebugLoggedInState />
+            <Navbar />
+            {children}
+          </SessionProvider>
         </TanstackProvider>
       </body>
     </html>

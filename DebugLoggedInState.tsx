@@ -1,12 +1,16 @@
-//import { auth } from './auth'
-//import { useSession } from "next-auth/react";
-const DebugLoggedInState = async () => {
-    /*useEffect(() => {
-        console.log("PRISMA:", prisma);
-    }, [])*/
-    //const { data: session, status } = useSession();
+"use client";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+const DebugLoggedInState = () => {
+    const { data: session, status } = useSession();
+    const loading = status === "loading";
+    const loggedIn = status === "authenticated";
     //console.log("SESSION STATUS:", status);
-    //console.log("SESSION DATA:", session);
+    useEffect(() => {
+        console.log("LOADING:", loading);
+        console.log("LOGGED IN:", loggedIn);
+        console.log("STATUS:", status);
+    }, [loggedIn, loading, status]);
     return (
         <div></div>
     )

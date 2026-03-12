@@ -5,11 +5,11 @@ import prisma from "./lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { compare } from "bcrypt";
 
-console.log("DEBUG: Is prisma.user defined?", !!prisma.user);
-console.log("DEBUG: Is prisma.account defined?", !!prisma.account);
-const accounts = await prisma.account.findMany();
+//console.log("DEBUG: Is prisma.user defined?", !!prisma.user);
+//console.log("DEBUG: Is prisma.account defined?", !!prisma.account);
+//const accounts = await prisma.account.findMany();
 const users = await prisma.user.findMany();
-console.log("DEBUG: Accounts? ", accounts);
+//console.log("DEBUG: Accounts? ", accounts);
 console.log("DEBUG: Users?", users)
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
@@ -43,7 +43,48 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
         })
     ],
+    events: {
+        linkAccount: async ({ user }) => {
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { emailVerified: new Date() },
+            });
+            console.log("EVENT: Google account linked, email marked verified.");
+        }
+    },
     callbacks: {
+        signIn: async ({ user, account }) => {
+            if (account?.provider === "google") {
+                console.log("GOOGLE PROVIDER ON SIGNIN!");
+                return true;
+
+                /*try {
+                    await prisma.user.update({
+                        where: { id: user.id },
+                        data: {
+                            emailVerified: new Date()
+                        }
+                    });
+                    console.log("EMAIL VERIFIED ON SIGNIN!");
+                    return true
+                }
+                catch (err) {
+                    console.error("Error auto-verifying google user:", err);
+                    return true;
+                }*/
+            };
+
+            const dbUser = await prisma.user.findUnique({
+                where: { id: user.id },
+                select: { emailVerified: true }
+            });
+
+            if (!dbUser || !dbUser.emailVerified) {
+                return false
+            }
+
+            return true
+        },
         jwt: async ({ token, user }) => {
             if (user && user.id) {
                 token.id = user.id
@@ -52,15 +93,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (!token.id) {
                 return null;
             }
+            console.log("CHECK 1");
             const dbUser = await prisma.user.findUnique({
                 where: { id: token.id as string },
                 select: { id: true, emailVerified: true }
             });
 
-            if (!dbUser || !dbUser.emailVerified) {
+            if (!dbUser) {
                 return null
             };
-
+            console.log("CHECK 2");
+            const isOAuth = await prisma.account.findFirst({
+                where: { userId: dbUser.id }
+            })
+            console.log("OAUTH:", isOAuth)
+            if (!dbUser.emailVerified && !isOAuth) {
+                return null
+            }
+            console.log("EMAIL VERIFICATION:", dbUser.emailVerified);
+            console.log("CHECK 3");
             return token;
         },
         session: async ({ session, token }) => {
@@ -78,5 +129,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         signIn: "/login"
     },
     secret: process.env.AUTH_SECRET,
-    debug: true
+    //debug: true,
 })

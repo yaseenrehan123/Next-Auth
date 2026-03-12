@@ -13,17 +13,18 @@ import { FaPhoneAlt } from "react-icons/fa";
 import NavCancelIcon from './NavCancelIcon';
 import SidebarOverlay from './SidebarOverlay';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/stores/useAuthStore';
+//import { useAuthStore } from '@/stores/useAuthStore';
 import { MdDelete } from "react-icons/md";
+import { useSession } from 'next-auth/react';
 //import useDeleteAccountConfirmationStore from '@/stores/useDeleteAccountConfirmationStore';
 //import useLogout from '@/hooks/useLogout';
 const Sidebar = () => {
+    const { data: session, status } = useSession();
     const enabled = useSidebarStore((state) => state.enabled);
-    const loggedIn = useAuthStore((state) => state.loggedIn);
+    const loggedIn = status === "authenticated"
     //const setEnabled = useDeleteAccountConfirmationStore((state) => state.setEnabled);
     //const { mutateAsync } = useLogout();
     const router = useRouter();
-
     const onSignButton = async (e: React.MouseEvent) => {
         e.preventDefault();
 
