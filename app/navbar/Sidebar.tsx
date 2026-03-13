@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 //import { useAuthStore } from '@/stores/useAuthStore';
 import { MdDelete } from "react-icons/md";
 import { useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 //import useDeleteAccountConfirmationStore from '@/stores/useDeleteAccountConfirmationStore';
 //import useLogout from '@/hooks/useLogout';
 const Sidebar = () => {
@@ -35,6 +36,9 @@ const Sidebar = () => {
             return;
         }
         console.log("LOGOUT!");
+        await signOut({
+            callbackUrl: "/"
+        });
         //await mutateAsync();
     }
 

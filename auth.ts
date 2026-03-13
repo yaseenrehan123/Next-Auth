@@ -8,9 +8,9 @@ import { compare } from "bcrypt";
 //console.log("DEBUG: Is prisma.user defined?", !!prisma.user);
 //console.log("DEBUG: Is prisma.account defined?", !!prisma.account);
 //const accounts = await prisma.account.findMany();
-const users = await prisma.user.findMany();
+//const users = await prisma.user.findMany();
 //console.log("DEBUG: Accounts? ", accounts);
-console.log("DEBUG: Users?", users)
+//console.log("DEBUG: Users?", users)
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
     providers: [
@@ -57,21 +57,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (account?.provider === "google") {
                 console.log("GOOGLE PROVIDER ON SIGNIN!");
                 return true;
-
-                /*try {
-                    await prisma.user.update({
-                        where: { id: user.id },
-                        data: {
-                            emailVerified: new Date()
-                        }
-                    });
-                    console.log("EMAIL VERIFIED ON SIGNIN!");
-                    return true
-                }
-                catch (err) {
-                    console.error("Error auto-verifying google user:", err);
-                    return true;
-                }*/
             };
 
             const dbUser = await prisma.user.findUnique({
@@ -89,7 +74,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (user && user.id) {
                 token.id = user.id
             };
-            console.log("TOKEN ID:", token.id);
+            //console.log("TOKEN ID:", token.id);
             if (!token.id) {
                 return null;
             }
@@ -106,11 +91,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             const isOAuth = await prisma.account.findFirst({
                 where: { userId: dbUser.id }
             })
-            console.log("OAUTH:", isOAuth)
+            //console.log("OAUTH:", isOAuth)
             if (!dbUser.emailVerified && !isOAuth) {
                 return null
             }
-            console.log("EMAIL VERIFICATION:", dbUser.emailVerified);
+            //console.log("EMAIL VERIFICATION:", dbUser.emailVerified);
             console.log("CHECK 3");
             return token;
         },

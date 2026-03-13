@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import signupSchema from '@/schemas/signupSchema';
 import Message from '@/components/ui/message';
 import { useMutation } from "@tanstack/react-query";
+import OAuthContainer from '../login/OAuthContainer';
 
 const SignupForm = () => {
     const [message, setMessage] = useState<string>("");
@@ -85,6 +86,7 @@ const SignupForm = () => {
             <Message variant={isSuccess ? 'success' : "error"}
                 disableOnContent='md'
                 content={message} />
+            <OAuthContainer />
         </FormContainer>
     )
 }

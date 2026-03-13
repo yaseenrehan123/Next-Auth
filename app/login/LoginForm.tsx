@@ -2,7 +2,7 @@ import Button from '@/components/ui/button'
 import FormContainer from '@/components/ui/formContainer'
 import FormField from '@/components/ui/formField'
 import Heading from '@/components/ui/heading'
-import { loginOAuth, loginUser } from '@/lib/actions'
+import { loginUser } from '@/lib/actions'
 import React from 'react'
 import OAuthContainer from './OAuthContainer'
 
