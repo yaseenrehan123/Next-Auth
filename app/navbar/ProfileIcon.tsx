@@ -3,7 +3,7 @@ import { useSidebarStore } from '@/stores/useSidebarStore';
 import React, { useEffect, useState } from 'react'
 import { CgProfile } from "react-icons/cg";
 import ProfileAvatar from '../../components/ui/profileAvatar';
-import type { ProfileAvatarProps, ProfileIconProps } from '@/lib/types';
+import type { ProfileAvatarProps } from '@/lib/types';
 //import { useAuthStore } from '@/stores/useAuthStore';
 import { useSession } from "next-auth/react";
 

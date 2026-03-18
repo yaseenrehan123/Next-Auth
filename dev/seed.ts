@@ -13,7 +13,7 @@ async function main() {
     await prisma.account.deleteMany();
     await prisma.user.deleteMany();
 
-    const salt = await genSalt(10);
+    /*const salt = await genSalt(10);
     const hashedPassword = await hash("password123", salt);
     const testUser = await prisma.user.create({
         data: {
@@ -24,5 +24,5 @@ async function main() {
         }
     });
 
-    console.log("CREATED TEST USER:", testUser);
+    console.log("CREATED TEST USER:", testUser);*/
 };

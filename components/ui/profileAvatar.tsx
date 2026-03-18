@@ -1,18 +1,23 @@
 import type { ProfileAvatarProps } from '@/lib/types';
 import { cva } from 'class-variance-authority';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useProfileStore } from '@/stores/useProfileStore';
+import { useSession } from 'next-auth/react';
 
 const ProfileAvatar = ({ variant, className, avatarUrl, ...props }: ProfileAvatarProps) => {
     const [logoError, setLogoError] = useState<Boolean>(false);
-    const username = useProfileStore((state) => state.username);
+    const { data: session } = useSession();
+    const username: string = session?.user?.username ?? "";
+    useEffect(() => {
+        console.log(username)
+    }, [username])
     return (<div {...props} className={cn(variants({ variant }), className)}>
         {
             !logoError ?
-                <img src={avatarUrl ?? "null"} alt="" className='rounded-full w-full h-full' onError={() => setLogoError(true)} />
+                <img src={avatarUrl ?? "null"} alt="" className='rounded-full w-full h-full' onError={() => { console.log("IMAGE ERROR!"); setLogoError(true) }} />
                 : <div className={`${variant === 'mainbar' ? 'text-2xl' : variant === 'sidebar' ? 'text-[40px]' : 'text-2xl'} text-white`}>
-                    {username?.charAt(0)}
+                    {username.charAt(0)}
                 </div>
         }
 

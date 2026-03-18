@@ -72,7 +72,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
         jwt: async ({ token, user }) => {
             if (user && user.id) {
-                token.id = user.id
+                token.id = user.id;
+                token.username = user.name;
+                token.email = user.email;
+                token.createdAt = user.createdAt;
+                token.updatedAt = user.updatedAt;
+                console.log("TOKEN CUSTOM FIELDS ASSIGNED!");
+                console.log("TOKEN ID:", token.id);
+                console.log("TOKEN NAME:", token.username);
+                console.log("TOKEN EMAIL:", token.email);
+                console.log("TOKEN CREATED AT:", token.createdAt);
+                console.log("TOKEN UPDATED AT:", token.updatedAt);
             };
             //console.log("TOKEN ID:", token.id);
             if (!token.id) {
@@ -102,6 +112,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session: async ({ session, token }) => {
             if (token.id && session.user) {
                 session.user.id = token.id as string
+                session.user.username = token.name;
+                session.user.email = token.email;
+                session.user.createdAt = token.createdAt;
+                session.user.updatedAt = token.updatedAt;
+                console.log("SESSION CUSTOM FIELDS ASSIGNED!");
+                console.log("SESSION ID:", session.user.id);
+                console.log("SESSION NAME:", session.user.username);
+                console.log("SESSION EMAIL:", session.user.email);
+                console.log("SESSION CREATED AT:", session.user.createdAt);
+                console.log("SESSION UPDATED AT:", session.user.updatedAt);
             };
 
             return session;
