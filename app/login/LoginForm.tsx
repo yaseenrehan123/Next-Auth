@@ -4,7 +4,7 @@ import FormField from '@/components/ui/formField'
 import Heading from '@/components/ui/heading'
 import { loginUser } from '@/lib/actions'
 import React from 'react'
-import OAuthContainer from './OAuthContainer'
+import OAuthContainer from '../../reusable-components/OAuthContainer'
 
 const LoginForm = () => {
     return (

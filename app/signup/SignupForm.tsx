@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import signupSchema from '@/schemas/signupSchema';
 import Message from '@/components/ui/message';
 import { useMutation } from "@tanstack/react-query";
-import OAuthContainer from '../login/OAuthContainer';
+import OAuthContainer from '../../reusable-components/OAuthContainer';
 
 const SignupForm = () => {
     const [message, setMessage] = useState<string>("");

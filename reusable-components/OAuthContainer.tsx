@@ -10,6 +10,10 @@ const OAuthContainer = () => {
                 onClick={() => loginOAuth("google")}>
                 Sign In With Google
             </Button>
+            <Button className='border-2 border-black w-40'
+                onClick={() => loginOAuth("github")}>
+                Sign In With Github
+            </Button>
         </div>
     )
 }

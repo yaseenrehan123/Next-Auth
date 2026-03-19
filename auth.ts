@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
+import Github from "next-auth/providers/github";
 import prisma from "./lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { compare } from "bcrypt";
@@ -16,6 +17,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
         Google({
             allowDangerousEmailAccountLinking: true
+        }),
+        Github({
+            clientId: process.env.AUTH_GITHUB_ID,
+            clientSecret: process.env.AUTH_GITHUB_SECRET,
+            allowDangerousEmailAccountLinking: true,
+            authorization: {
+                params: {
+                    scope: "read:user user:email",
+                }
+            }
         }),
         Credentials({
 
@@ -54,7 +65,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     callbacks: {
         signIn: async ({ user, account }) => {
-            if (account?.provider === "google") {
+            if (account?.type === "oauth") {
                 console.log("GOOGLE PROVIDER ON SIGNIN!");
                 return true;
             };
