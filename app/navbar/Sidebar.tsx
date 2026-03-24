@@ -17,14 +17,13 @@ import { useRouter } from 'next/navigation';
 import { MdDelete } from "react-icons/md";
 import { useSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
-//import useDeleteAccountConfirmationStore from '@/stores/useDeleteAccountConfirmationStore';
+import useDeleteAccountConfirmationStore from '@/stores/useDeleteAccountConfirmationStore';
 //import useLogout from '@/hooks/useLogout';
 const Sidebar = () => {
     const { data: session, status } = useSession();
     const enabled = useSidebarStore((state) => state.enabled);
     const loggedIn = status === "authenticated"
-    //const setEnabled = useDeleteAccountConfirmationStore((state) => state.setEnabled);
-    //const { mutateAsync } = useLogout();
+    const setEnabled = useDeleteAccountConfirmationStore((state) => state.setEnabled);
     const router = useRouter();
     const onSignButton = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -39,11 +38,10 @@ const Sidebar = () => {
         await signOut({
             callbackUrl: "/"
         });
-        //await mutateAsync();
     }
 
     const onDeleteAccountButton = () => {
-        //setEnabled(true);
+        setEnabled(true);
     }
 
     return (

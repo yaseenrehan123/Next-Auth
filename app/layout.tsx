@@ -5,6 +5,7 @@ import TanstackProvider from "@/providers/TanstackProvider";
 import DebugLoggedInState from "@/DebugLoggedInState";
 import Navbar from "./navbar/Navbar";
 import { SessionProvider } from "next-auth/react";
+import DeleteAccountConfirmation from "@/delete-account-confirmation/DeleteAccountConfirmation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({
           <SessionProvider>
             <DebugLoggedInState />
             <Navbar />
+            <DeleteAccountConfirmation />
             {children}
           </SessionProvider>
         </TanstackProvider>

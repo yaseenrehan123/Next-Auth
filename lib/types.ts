@@ -26,6 +26,10 @@ export type ProfileStore = {
     setCreatedAt: (newVal: Date | null) => void,
     setUpdatedAt: (newVal: Date | null) => void
 }
+export type DeleteAccountConfirmationStore = {
+    enabled: boolean,
+    setEnabled: (val: boolean) => void
+}
 //SHADCN VARIANTS
 export type ResponsiveVariants = {
     display?: 'block' | 'inline' | 'inlineBlock' | 'flex' | 'inlineFlex' | 'grid' | 'hidden',
