@@ -3,13 +3,14 @@ import useDeleteAccountConfirmationStore from '@/stores/useDeleteAccountConfirma
 import React, { useEffect, useState } from 'react'
 import DeleteConfirmationCancelIcon from './DeleteAccountConfirmationIcon';
 import FormField from '@/components/ui/formField';
-import { useProfileStore } from '@/stores/useProfileStore';
 import Button from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
-//import type { DeleteAccountConfirmationFields } from '@/lib/types';
+import type { DeleteAccountConfirmationFields } from '@/lib/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-//import deleteAccountConfirmationSchema from '@/validations/deleteAccountConfirmationSchema';
+import deleteAccountConfirmationSchema from '@/schemas/deleteAccountConfirmationSchema';
 import { useMutation } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
+import { deleteAccount } from '@/lib/actions';
 
 const DeleteAccountConfirmation = () => {
     const [confirmed, setConfirmed] = useState<boolean>(false);
@@ -17,66 +18,44 @@ const DeleteAccountConfirmation = () => {
 
     const enabled = useDeleteAccountConfirmationStore((state) => state.enabled);
     const setEnabled = useDeleteAccountConfirmationStore((state) => state.setEnabled);
-    if (!enabled) return (<div></div>)
-    /*const username = useProfileStore((state) => state.username);
-    const accessToken = useAuthStore((state) => state.accessToken);
-    const refreshToken = useAuthStore((state) => state.refreshToken);
-    const setAccessToken = useAuthStore((state) => state.setAccessToken);
-    const setRefreshToken = useAuthStore((state) => state.setRefreshToken);
-    const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
+
+    const { data: session, status } = useSession();
+    const email: string = session?.user.email || ""
+
     const { handleSubmit, register, reset, watch } = useForm<DeleteAccountConfirmationFields>({
         resolver: zodResolver(deleteAccountConfirmationSchema)
     });
-*/
-    //const confirmationValue: string = watch("username");
 
-    //const { mutateAsync } = useRefreshAccessToken();
+    const confirmationEmail: string = watch("email");
 
-    /*const { mutate } = useMutation({
+    const { mutate } = useMutation({
         mutationKey: ["deleteAccount"],
-        mutationFn: async () => {
-            const path: string = `${process.env.VITE_SERVER_PATH}/delete-account`;
-            const res = await fetch(path, {
-                method: "POST",
-                headers: {
-                    //"Authorization": `Bearer ${accessToken}`,
-                    "Content-Type": "application/json",
-                },
-                credentials: "include"
-            });
-            const body = await res.json();
-            if (!res.ok) {
-                throw new Error(body?.error || "Unknown error occured!");
-            }
-        },
+        mutationFn: (data: DeleteAccountConfirmationFields) => deleteAccount(data.email),
         onSuccess: () => {
             setMessage("Success");
-            //reset();
             setEnabled(false);
 
         },
         onError: (e: Error) => {
             setMessage(e.message)
         }
-    });*/
+    });
 
-    /*const onSubmit = async () => {
-        if (!refreshToken) return;
-        if (!accessToken || isTokenExpired(accessToken)) {
-            await mutateAsync();
-        };
-        mutate();
-    }*/
+    const onSubmit = async (data: DeleteAccountConfirmationFields) => {
+        await mutate({
+            email: data.email
+        })
+    }
 
-    /*useEffect(() => {
-        if (!username) {
+    useEffect(() => {
+        if (!email) {
             setConfirmed(false);
             return;
         }
 
-        setConfirmed(confirmationValue === username);
-    }, [confirmationValue]);
-*/
+        setConfirmed(confirmationEmail === email);
+    }, [confirmationEmail]);
+
     if (!enabled) return (<div></div>)
     return (
         <div className='fixed w-[clamp(20rem,80vw,40rem)] h-[clamp(10rem,50vh,30rem)] bg-black rounded-[8px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform
@@ -85,10 +64,10 @@ const DeleteAccountConfirmation = () => {
                 Are you sure you?
             </div>
 
-            <form className='flex items-center flex-col gap-5' onSubmit={() => { }}>
+            <form className='flex items-center flex-col gap-5' onSubmit={handleSubmit(onSubmit)}>
                 <FormField
-                    placeholder='Confirm Username'
-                // {...register("username")}
+                    placeholder='Confirm Email'
+                    {...register("email")}
                 />
 
                 {confirmed && <div className='text-yellow-500 text-center'>

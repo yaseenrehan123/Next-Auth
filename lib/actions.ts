@@ -6,7 +6,7 @@ import { sendMail } from "./resend";
 import { SignUpFormFields, VerifyUserProps } from "./types";
 import crypto from "crypto";
 import { signIn } from "@/auth";
-
+import { signOut } from "next-auth/react";
 export async function registerUser(formData: SignUpFormFields) {
     const signupSchema = (await import("@/schemas/signupSchema")).default;
     if (!signupSchema) {
@@ -136,4 +136,21 @@ export async function loginOAuth(provider: string) {
     catch (err) {
         throw err
     }
+}
+
+export async function deleteAccount(email: string) {
+    const user = await prisma.user.findUnique({
+        where: { email: email }
+    });
+    if (!user) {
+        throw new Error(`ACCOUNT NOT FOUND! ${email}`);
+    }
+    await prisma.user.delete({
+        where: { id: user.id }
+    });
+
+    await signOut({
+        callbackUrl: "/"
+    });
+
 }
