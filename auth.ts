@@ -65,7 +65,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     callbacks: {
         signIn: async ({ user, account }) => {
-            if (account?.type === "oauth") {
+            console.log("ACCOUNT:", account);
+            console.log("ACCOUNT TYPE:", account?.type)
+            if (account?.type === "oauth" || account?.type === "oidc") {
                 console.log("GOOGLE PROVIDER ON SIGNIN!");
                 return true;
             };

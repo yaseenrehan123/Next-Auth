@@ -6,7 +6,7 @@ import { sendMail } from "./resend";
 import { SignUpFormFields, VerifyUserProps } from "./types";
 import crypto from "crypto";
 import { signIn } from "@/auth";
-import { signOut } from "next-auth/react";
+import { signOut } from "@/auth";
 export async function registerUser(formData: SignUpFormFields) {
     const signupSchema = (await import("@/schemas/signupSchema")).default;
     if (!signupSchema) {
@@ -150,7 +150,7 @@ export async function deleteAccount(email: string) {
     });
 
     await signOut({
-        callbackUrl: "/"
+        redirectTo: "/"
     });
 
 }

@@ -11,6 +11,7 @@ import deleteAccountConfirmationSchema from '@/schemas/deleteAccountConfirmation
 import { useMutation } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { deleteAccount } from '@/lib/actions';
+import Message from '@/components/ui/message';
 
 const DeleteAccountConfirmation = () => {
     const [confirmed, setConfirmed] = useState<boolean>(false);
@@ -22,13 +23,13 @@ const DeleteAccountConfirmation = () => {
     const { data: session, status } = useSession();
     const email: string = session?.user.email || ""
 
-    const { handleSubmit, register, reset, watch } = useForm<DeleteAccountConfirmationFields>({
+    const { handleSubmit, register, reset, watch, formState: { errors } } = useForm<DeleteAccountConfirmationFields>({
         resolver: zodResolver(deleteAccountConfirmationSchema)
     });
 
     const confirmationEmail: string = watch("email");
 
-    const { mutate } = useMutation({
+    const { mutate, isPending, } = useMutation({
         mutationKey: ["deleteAccount"],
         mutationFn: (data: DeleteAccountConfirmationFields) => deleteAccount(data.email),
         onSuccess: () => {
@@ -42,9 +43,10 @@ const DeleteAccountConfirmation = () => {
     });
 
     const onSubmit = async (data: DeleteAccountConfirmationFields) => {
+        console.log("DELETE ACCOUNT BUTTON CLICKED!");
         await mutate({
             email: data.email
-        })
+        });
     }
 
     useEffect(() => {
@@ -69,6 +71,7 @@ const DeleteAccountConfirmation = () => {
                     placeholder='Confirm Email'
                     {...register("email")}
                 />
+                <Message content={errors.email?.message} variant='error' />
 
                 {confirmed && <div className='text-yellow-500 text-center'>
                     This action cannot be undone! Your account would be permanantely deleted! Proceed with caution!
@@ -77,9 +80,10 @@ const DeleteAccountConfirmation = () => {
                 {confirmed &&
                     <Button className='text-red-500 w-32 font-bold font-roboto'
                         type='submit'>
-                        Delete Account
+                        {isPending ? "Loading..." : "Delete Account"}
                     </Button>}
             </form>
+            <Message content={message} disableOnContent='md' />
             <DeleteConfirmationCancelIcon />
         </div>
     )
