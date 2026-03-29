@@ -150,7 +150,7 @@ export async function deleteAccount(email: string) {
     });
 
     await signOut({
-        redirectTo: "/"
+        redirect: false
     });
 
 }

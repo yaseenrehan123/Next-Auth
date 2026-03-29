@@ -12,7 +12,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { deleteAccount } from '@/lib/actions';
 import Message from '@/components/ui/message';
-
 const DeleteAccountConfirmation = () => {
     const [confirmed, setConfirmed] = useState<boolean>(false);
     const [message, setMessage] = useState<string>('');
@@ -29,12 +28,13 @@ const DeleteAccountConfirmation = () => {
 
     const confirmationEmail: string = watch("email");
 
-    const { mutate, isPending, } = useMutation({
+    const { mutate, isPending, isError, isSuccess } = useMutation({
         mutationKey: ["deleteAccount"],
         mutationFn: (data: DeleteAccountConfirmationFields) => deleteAccount(data.email),
         onSuccess: () => {
             setMessage("Success");
             setEnabled(false);
+            window.location.href = "/"
 
         },
         onError: (e: Error) => {
@@ -83,7 +83,8 @@ const DeleteAccountConfirmation = () => {
                         {isPending ? "Loading..." : "Delete Account"}
                     </Button>}
             </form>
-            <Message content={message} disableOnContent='md' />
+            <Message content={message} disableOnContent='md'
+                variant={isError ? "error" : "success"} />
             <DeleteConfirmationCancelIcon />
         </div>
     )
