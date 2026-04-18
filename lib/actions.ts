@@ -3,10 +3,12 @@ import generateVerificationToken from "@/tokens/generateVerificationToken";
 import prisma from "./prisma";
 import { hash, genSalt } from "bcrypt";
 import { sendMail } from "./resend";
-import { SignUpFormFields, VerifyUserProps } from "./types";
+import { EditProfileFields, SignUpFormFields, VerifyUserProps } from "./types";
 import crypto from "crypto";
 import { signIn } from "@/auth";
 import { signOut } from "@/auth";
+import editProfileSchema from "@/schemas/editProfileSchema";
+import { auth } from "@/auth";
 export async function registerUser(formData: SignUpFormFields) {
     const signupSchema = (await import("@/schemas/signupSchema")).default;
     if (!signupSchema) {
@@ -153,4 +155,28 @@ export async function deleteAccount(email: string) {
         redirect: false
     });
 
+}
+
+export async function setProfileData(fields: EditProfileFields) {
+    console.log("EDIT PROFILE CALLED!");
+    //const { data: session, status } = useSession();
+    const session = await auth();
+    /* if (status !== "authenticated") {
+         throw new Error("USER NOT LOGGED IN TO SET PROFILE DATA")
+     }*/
+    if (!session || !session.user?.id) {
+        throw new Error("SESSION ID NULL")
+    }
+    const result = editProfileSchema.safeParse(fields);
+    if (!result.success) {
+        throw new Error(result.error.message)
+    }
+    const data: EditProfileFields = result.data;
+    console.log("EDIT PROFILE ChECKS PASSED!");
+    await prisma.user.update({
+        where: { id: session.user.id },
+        data: {
+            name: data.username
+        }
+    });
 }

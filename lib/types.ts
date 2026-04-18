@@ -2,6 +2,7 @@ import signupSchema from "@/schemas/signupSchema"
 import deleteAccountConfirmationSchema from "@/schemas/deleteAccountConfirmationSchema";
 import { LinkProps } from "next/link";
 import { z } from "zod";
+import editProfileSchema from "@/schemas/editProfileSchema";
 //STORES
 export type SidebarStore = {
     enabled: boolean,
@@ -88,3 +89,4 @@ export type ProfileIconProps = {
 //INFERS
 export type SignUpFormFields = z.infer<typeof signupSchema>
 export type DeleteAccountConfirmationFields = z.infer<typeof deleteAccountConfirmationSchema>
+export type EditProfileFields = z.infer<typeof editProfileSchema>
