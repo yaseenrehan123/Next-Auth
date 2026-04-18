@@ -104,7 +104,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             console.log("CHECK 1");
             const dbUser = await prisma.user.findUnique({
                 where: { id: token.id as string },
-                select: { id: true, emailVerified: true }
+                //select: { id: true, emailVerified: true }
             });
 
             if (!dbUser) {
@@ -120,6 +120,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             //console.log("EMAIL VERIFICATION:", dbUser.emailVerified);
             console.log("CHECK 3");
+
+            token.name = dbUser.name;
+
             return token;
         },
         session: async ({ session, token }) => {

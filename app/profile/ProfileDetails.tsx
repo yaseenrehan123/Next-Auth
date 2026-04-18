@@ -12,7 +12,7 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 
 const ProfileDetails = () => {
-    const { data: session, status } = useSession();
+    const { data: session, status, update } = useSession();
     const [editing, setEditing] = useState<boolean>(false);
     const { register, reset, handleSubmit, formState: { errors } } = useForm<EditProfileFields>({
         resolver: zodResolver(editProfileSchema),
@@ -23,8 +23,22 @@ const ProfileDetails = () => {
     }
     const onConfirm = async (formData: EditProfileFields) => {
         console.log("EDIT FORM SUBMIT!")
-        await setProfileData(formData);
         setEditing(false);
+        try {
+            await setProfileData(formData);
+            await update({
+                ...session,
+                user: {
+                    ...session?.user,
+                    name: formData.username,
+                },
+            });
+        }
+        catch (err) {
+            console.error("Update failed:", err);
+        }
+
+
         reset()
     }
     return (
